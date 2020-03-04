@@ -21,6 +21,9 @@
     "@angular/router": "~9.0.1",
     "ag-grid-angular": "^22.1.1",
     "ag-grid-community": "^22.1.1",
+    "@ag-grid-enterprise/all-modules": "^22.1.2",
+    "@ag-grid-enterprise/core": "^22.1.1",
+    "mockserver-client": "^5.9.0",
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",
     "zone.js": "~0.10.2"

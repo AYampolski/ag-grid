@@ -4,7 +4,10 @@
     id="myGrid"
     class="ag-theme-balham"
     [columnDefs]="columnDefs"
+    [modules]="modules"
     [rowData]="rowData"
+    [allowContextMenuWithControlKey]="true"
+    [getContextMenuItems]="getContextMenuItems"
     (gridReady)="onGridReady($event)"
   ></ag-grid-angular>
 </div>
