@@ -5,6 +5,8 @@ import { GridItem } from '@models/grid-item.model';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { mock } from './http/mock/mock.http';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -13,6 +15,13 @@ export class CommonService {
 
   constructor(private api: HttpService) {}
 
+  getTestData() {
+    return mock.pipe(
+      map(googleResponse => {
+        return googleResponse.items;
+      })
+    );
+  }
   /**
    * Fetch data from provided link
    */
@@ -28,7 +37,8 @@ export class CommonService {
    * Formate data for rows
    */
   getFormateData(): Observable<GridItem[]> {
-    return this.getData().pipe(
+    // return this.getData().pipe(
+    return this.getTestData().pipe(
       map(youtubeItems => {
         return youtubeItems.map(youtubeItem => {
           const videoId = this.urlFormat.concat(youtubeItem.id.videoId);
