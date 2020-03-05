@@ -2,6 +2,9 @@ import { Component } from '@angular/core';
 import { CommonService } from '@services/common.service';
 import { AllModules, Module } from '@ag-grid-enterprise/all-modules';
 import { ImageFormatterComponent } from '@components/image-formatter/image-formatter.component';
+import { TotalToolComponent } from './components/total-tool/total-tool.component';
+import { ModeToolComponent } from './components/mode-tool/mode-tool.component';
+import { SelectedToolComponent } from './components/selected-tool/selected-tool.component';
 
 @Component({
   selector: 'app-root',
@@ -10,9 +13,12 @@ import { ImageFormatterComponent } from '@components/image-formatter/image-forma
 })
 export class AppComponent {
   title = 'testGrid';
+  defaultColDef;
   rowData;
   public modules: Module[] = AllModules;
   getRowHeight;
+  sideBar;
+  frameworkComponents;
   private gridApi;
   private gridColumnApi;
   columnDefs = [
@@ -27,7 +33,49 @@ export class AppComponent {
     { headerName: 'Description', field: 'description' },
   ];
 
-  constructor(private apiService: CommonService) {}
+  constructor(private apiService: CommonService) {
+    this.defaultColDef = {
+      enableValue: true,
+      enableRowGroup: true,
+      enablePivot: true,
+      sortable: true,
+      filter: true,
+    };
+
+    this.sideBar = {
+      toolPanels: [
+        {
+          id: 'modstats',
+          labelDefault: 'Mode Stats',
+          labelKey: 'modstats',
+          iconKey: 'columns',
+          toolPanel: 'modeToolComponent',
+        },
+        {
+          id: 'totalStats',
+          labelDefault: 'Total Stats',
+          labelKey: 'totalStats',
+          iconKey: 'columns',
+          toolPanel: 'totalToolComponent',
+        },
+        {
+          id: 'selectedStats',
+          labelDefault: 'Total Stats',
+          labelKey: 'selectedStats',
+          iconKey: 'columns',
+          toolPanel: 'selectedToolComponent',
+        },
+      ],
+      position: 'right',
+      defaultToolPanel: 'modstats',
+    };
+
+    this.frameworkComponents = {
+      totalToolComponent: TotalToolComponent,
+      modeToolComponent: ModeToolComponent,
+      selectedToolComponent: SelectedToolComponent,
+    };
+  }
 
   onGridReady(params) {
     this.gridApi = params.api;

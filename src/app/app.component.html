@@ -5,8 +5,11 @@
     class="ag-theme-balham"
     [columnDefs]="columnDefs"
     [modules]="modules"
+    [sideBar]="sideBar"
     [rowData]="rowData"
+    [defaultColDef]="defaultColDef"
     [allowContextMenuWithControlKey]="true"
+    [frameworkComponents]="frameworkComponents"
     [getContextMenuItems]="getContextMenuItems"
     (gridReady)="onGridReady($event)"
   ></ag-grid-angular>
