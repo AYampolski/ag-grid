@@ -1,9 +1,18 @@
 <div style="text-align: center">
   <span>
-    <h2><i class="fa fa-calculator"></i> Custom Stats</h2>
     <dl style="font-size: large; padding: 30px 40px 10px 30px">
-      <dt class="totalStyle">
-        Total Medals: <b>{{ total }}</b>
+      <dt>
+        <h3>Selection mode</h3>
+        <div class="checkbox-container yellow">
+          <input
+            type="checkbox"
+            checked
+            id="toggle"
+            (change)="onChangeMode($event)"
+          />
+          <label for="toggle"></label>
+          <div class="active-circle"></div>
+        </div>
       </dt>
     </dl>
   </span>

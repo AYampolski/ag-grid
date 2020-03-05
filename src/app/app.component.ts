@@ -2,9 +2,10 @@ import { Component } from '@angular/core';
 import { CommonService } from '@services/common.service';
 import { AllModules, Module } from '@ag-grid-enterprise/all-modules';
 import { ImageFormatterComponent } from '@components/image-formatter/image-formatter.component';
-import { TotalToolComponent } from './components/total-tool/total-tool.component';
-import { ModeToolComponent } from './components/mode-tool/mode-tool.component';
-import { SelectedToolComponent } from './components/selected-tool/selected-tool.component';
+import { TotalToolComponent } from '@components/total-tool/total-tool.component';
+import { ModeToolComponent } from '@components/mode-tool/mode-tool.component';
+import { SelectedToolComponent } from '@components/selected-tool/selected-tool.component';
+import { HeaderCustomComponent } from '@components/header-custom/header-custom.component';
 
 @Component({
   selector: 'app-root',
@@ -12,16 +13,23 @@ import { SelectedToolComponent } from './components/selected-tool/selected-tool.
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  title = 'testGrid';
   defaultColDef;
   rowData;
   public modules: Module[] = AllModules;
-  getRowHeight;
   sideBar;
+  onRowSelected;
+  rowSelection;
   frameworkComponents;
   private gridApi;
   private gridColumnApi;
   columnDefs = [
+    {
+      headerName: '[checked]',
+      field: 'select',
+      width: 100,
+      cellRenderer: 'customHeaderComponent',
+      sortable: true,
+    },
     {
       headerName: '',
       field: 'thumbnails',
@@ -35,13 +43,29 @@ export class AppComponent {
 
   constructor(private apiService: CommonService) {
     this.defaultColDef = {
-      enableValue: true,
-      enableRowGroup: true,
-      enablePivot: true,
-      sortable: true,
-      filter: true,
+      resizable: true,
     };
 
+    this.frameworkComponents = {
+      totalToolComponent: TotalToolComponent,
+      modeToolComponent: ModeToolComponent,
+      selectedToolComponent: SelectedToolComponent,
+      customHeaderComponent: HeaderCustomComponent,
+    };
+
+    this.rowSelection = 'multiple';
+    this.onRowSelected = event => {
+      if (!event.data.select) {
+        event.node.setDataValue('select', true);
+      } else {
+        event.node.setDataValue('select', false);
+      }
+    };
+  }
+
+  onGridReady(params) {
+    this.gridApi = params.api;
+    this.gridColumnApi = params.columnApi;
     this.sideBar = {
       toolPanels: [
         {
@@ -60,7 +84,7 @@ export class AppComponent {
         },
         {
           id: 'selectedStats',
-          labelDefault: 'Total Stats',
+          labelDefault: 'Selected Stats',
           labelKey: 'selectedStats',
           iconKey: 'columns',
           toolPanel: 'selectedToolComponent',
@@ -69,21 +93,8 @@ export class AppComponent {
       position: 'right',
       defaultToolPanel: 'modstats',
     };
-
-    this.frameworkComponents = {
-      totalToolComponent: TotalToolComponent,
-      modeToolComponent: ModeToolComponent,
-      selectedToolComponent: SelectedToolComponent,
-    };
-  }
-
-  onGridReady(params) {
-    this.gridApi = params.api;
-    this.gridColumnApi = params.columnApi;
-
     this.apiService.getFormateData().subscribe(data => {
       this.rowData = data;
-      console.log(data);
     });
   }
 

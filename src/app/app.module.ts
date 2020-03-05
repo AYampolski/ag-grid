@@ -8,6 +8,7 @@ import { ImageFormatterComponent } from '@components/image-formatter/image-forma
 import { ModeToolComponent } from '@components/mode-tool/mode-tool.component';
 import { TotalToolComponent } from '@components/total-tool/total-tool.component';
 import { SelectedToolComponent } from './components/selected-tool/selected-tool.component';
+import { HeaderCustomComponent } from '@components/header-custom/header-custom.component';
 
 @NgModule({
   declarations: [AppComponent],
@@ -20,6 +21,7 @@ import { SelectedToolComponent } from './components/selected-tool/selected-tool.
       ModeToolComponent,
       TotalToolComponent,
       SelectedToolComponent,
+      HeaderCustomComponent
     ]),
   ],
   providers: [],

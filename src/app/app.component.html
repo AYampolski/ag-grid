@@ -8,9 +8,12 @@
     [sideBar]="sideBar"
     [rowData]="rowData"
     [defaultColDef]="defaultColDef"
-    [allowContextMenuWithControlKey]="true"
+    [rowSelection]="rowSelection"
+    [rowMultiSelectWithClick]="true"
     [frameworkComponents]="frameworkComponents"
+    [allowContextMenuWithControlKey]="true"
     [getContextMenuItems]="getContextMenuItems"
     (gridReady)="onGridReady($event)"
+    (rowSelected)="onRowSelected($event)"
   ></ag-grid-angular>
 </div>
