@@ -4,7 +4,7 @@ import { YoutubeItem } from '@app/models/google-response.model';
 import { GridItem } from '@models/grid-item.model';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-
+import * as moment from 'moment';
 import { mock } from './http/mock/mock.http';
 
 @Injectable({
@@ -15,6 +15,9 @@ export class CommonService {
 
   constructor(private api: HttpService) {}
 
+  /**
+   * There is a day limit for api calls. Use it for it
+   */
   getTestData() {
     return mock.pipe(
       map(googleResponse => {
@@ -41,12 +44,11 @@ export class CommonService {
     return this.getTestData().pipe(
       map(youtubeItems => {
         return youtubeItems.map(youtubeItem => {
-          const videoId = this.urlFormat.concat(youtubeItem.id.videoId);
           const snippet = youtubeItem.snippet;
           return new GridItem(
             snippet.thumbnails.default.url,
-            snippet.publishedAt,
-            videoId,
+            moment(snippet.publishedAt).format('DD-MMM-YYYY HH:mm'),
+            this.urlFormat.concat(youtubeItem.id.videoId),
             snippet.description
           );
         });

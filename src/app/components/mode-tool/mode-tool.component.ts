@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-
 import { IToolPanel, IToolPanelParams } from '@ag-grid-community/all-modules';
-import { ImageFormatterComponent } from '../image-formatter/image-formatter.component';
+import { ColumnDefsService } from '@services/column-defs.service';
+import { ColumnDefs } from '@models/column-def.model';
+
 @Component({
   selector: 'app-mode-tool',
   templateUrl: './mode-tool.component.html',
@@ -9,6 +10,13 @@ import { ImageFormatterComponent } from '../image-formatter/image-formatter.comp
 })
 export class ModeToolComponent implements IToolPanel {
   private params;
+  private defaultColumn: ColumnDefs[];
+  private withSelectedColumn: ColumnDefs[];
+
+  constructor(private columnService: ColumnDefsService) {
+    this.defaultColumn = this.columnService.getColumnDefs();
+    this.withSelectedColumn = this.columnService.getModeColumnDefs();
+  }
 
   agInit(params: IToolPanelParams): void {
     this.params = params;
@@ -16,45 +24,10 @@ export class ModeToolComponent implements IToolPanel {
 
   onChangeMode(e) {
     if (!e.target.checked) {
-      this.params.api.setColumnDefs(this.columnDefsNormalWithoutSelection());
+      this.params.api.setColumnDefs(this.defaultColumn);
     } else {
-      this.params.api.setColumnDefs(this.columnDefsNormal());
+      this.params.api.setColumnDefs(this.withSelectedColumn);
     }
-  }
-
-  columnDefsNormal() {
-    return [
-      {
-        headerName: '[checked]',
-        field: 'select',
-        width: 100,
-        cellRenderer: 'customHeaderComponent',
-        sortable: true,
-      },
-      {
-        headerName: '',
-        field: 'thumbnails',
-        autoHeight: true,
-        cellRendererFramework: ImageFormatterComponent,
-      },
-      { headerName: 'Published on', field: 'publishedAt' },
-      { headerName: 'Video Title', field: 'title' },
-      { headerName: 'Description', field: 'description' },
-    ];
-  }
-
-  columnDefsNormalWithoutSelection() {
-    return [
-      {
-        headerName: '',
-        field: 'thumbnails',
-        autoHeight: true,
-        cellRendererFramework: ImageFormatterComponent,
-      },
-      { headerName: 'Published on', field: 'publishedAt' },
-      { headerName: 'Video Title', field: 'title' },
-      { headerName: 'Description', field: 'description' },
-    ];
   }
 
   refresh(): void {

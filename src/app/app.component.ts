@@ -1,11 +1,15 @@
 import { Component } from '@angular/core';
 import { CommonService } from '@services/common.service';
 import { AllModules, Module } from '@ag-grid-enterprise/all-modules';
-import { ImageFormatterComponent } from '@components/image-formatter/image-formatter.component';
+
 import { TotalToolComponent } from '@components/total-tool/total-tool.component';
 import { ModeToolComponent } from '@components/mode-tool/mode-tool.component';
 import { SelectedToolComponent } from '@components/selected-tool/selected-tool.component';
+import { SelectedCellRenderComponent } from '@components/selected-cell-render/selected-cell-render.component';
 import { HeaderCustomComponent } from '@components/header-custom/header-custom.component';
+
+import { ColumnDefs } from '@models/column-def.model';
+import { ColumnDefsService } from '@services/column-defs.service';
 
 @Component({
   selector: 'app-root',
@@ -15,33 +19,22 @@ import { HeaderCustomComponent } from '@components/header-custom/header-custom.c
 export class AppComponent {
   defaultColDef;
   rowData;
-  public modules: Module[] = AllModules;
+  modules: Module[] = AllModules;
   sideBar;
   onRowSelected;
   rowSelection;
   frameworkComponents;
+  columnDefs: ColumnDefs[];
+
   private gridApi;
   private gridColumnApi;
-  columnDefs = [
-    {
-      headerName: '[checked]',
-      field: 'select',
-      width: 100,
-      cellRenderer: 'customHeaderComponent',
-      sortable: true,
-    },
-    {
-      headerName: '',
-      field: 'thumbnails',
-      autoHeight: true,
-      cellRendererFramework: ImageFormatterComponent,
-    },
-    { headerName: 'Published on', field: 'publishedAt' },
-    { headerName: 'Video Title', field: 'title' },
-    { headerName: 'Description', field: 'description' },
-  ];
 
-  constructor(private apiService: CommonService) {
+  constructor(
+    private apiService: CommonService,
+    private columnService: ColumnDefsService
+  ) {
+    this.columnDefs = this.columnService.getColumnDefs();
+
     this.defaultColDef = {
       resizable: true,
     };
@@ -50,16 +43,13 @@ export class AppComponent {
       totalToolComponent: TotalToolComponent,
       modeToolComponent: ModeToolComponent,
       selectedToolComponent: SelectedToolComponent,
-      customHeaderComponent: HeaderCustomComponent,
+      customHeaderComponent: SelectedCellRenderComponent,
+      testHeader: HeaderCustomComponent,
     };
 
     this.rowSelection = 'multiple';
     this.onRowSelected = event => {
-      if (!event.data.select) {
-        event.node.setDataValue('select', true);
-      } else {
-        event.node.setDataValue('select', false);
-      }
+      event.node.setDataValue('select', !event.data.select);
     };
   }
 
@@ -91,26 +81,26 @@ export class AppComponent {
         },
       ],
       position: 'right',
-      defaultToolPanel: 'modstats',
     };
     this.apiService.getFormateData().subscribe(data => {
       this.rowData = data;
+      this.gridApi.sizeColumnsToFit();
     });
   }
 
   getContextMenuItems(params) {
-    if (params.column.colDef.headerName !== 'Video Title') {
-      return;
-    }
-    const result = [
-      {
+    const result = [];
+
+    if (params.column.colDef.headerName === 'Video Title') {
+      result.push({
         name: 'Open in new tab ' + params.column.colDef.headerName,
-        action: function() {
+        action: () => {
           window.open(params.value, '_blank');
         },
         cssClasses: ['redFont', 'bold'],
-      },
-    ];
+      });
+    }
+    result.push('copy', 'copyWithHeadersCopy', 'paste');
     return result;
   }
 }
